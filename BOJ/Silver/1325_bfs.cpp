@@ -25,9 +25,9 @@ int main(){
         v[b].push_back(a);
     }
     for(int i=1 ; i<=n ; i++){
-        q.push(i);
-        vis[i]=1;
-        cnt++;
+        q.push(i);// 아니 이거까지 해놓구
+        vis[i]=1;// 어떻게 이걸
+        cnt++;// 까먹을수고 있죠? 멍청대갈
         while(not q.empty()){
         int now = q.front();
         q.pop();
