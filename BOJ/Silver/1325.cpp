@@ -6,7 +6,8 @@
 #define pp pair<int,int>
 using namespace std;
 int n,m;
-vector<int>v[10000];
+vector<int>v[10000];// 이거를 10001로 했어야 bad_alloc이 안걸리겠지?
+// 괜히 이것때문에 30분 버림
 int vis[10001];
 priority_queue<pp,vector<pp>, greater<pp>>pq;
 // 뭔가 pq쓰면 될거같은데 -> 마지막에 sort를 하든가 애초에 pq로 넣던가 하면 풀릴듯
@@ -33,20 +34,18 @@ int main(){
     }
    for(int i=1 ; i<=n ; i++){
     DFS(i);
-    cout<<i<< " " <<cnt << " "<< mx<<  endl;
     mx = (mx>cnt)?mx:cnt;
     pq.push({cnt,i});
-    //cout<<i<< " " <<cnt << " "<< mx<<  endl;
+    //cout<<i<< " " <<cnt << endl;
     for(int j=0;j<=10000;j++)vis[j]=0;
     cnt=0;
    }
-   // -> 이방식이 왜 런타임에러가 나오는지는 모르겠네..
-//    while(not pq.empty()){
-//     int x  = pq.top().second;
-//     int y = pq.top().first;
-//     if(y==mx) cout<<x<<" ";
-//     pq.pop();
-//    }
+   while(not pq.empty()){
+    int x  = pq.top().second;
+    int y = pq.top().first;
+    if(y==mx) cout<<x<<" ";
+    pq.pop();
+   }
 }
 
 // 처음에는 말을 어렵게 써둬서 무슨말인지 했는데
