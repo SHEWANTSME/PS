@@ -48,6 +48,6 @@ int DP(vector<int>&arr, int tar,int sum,int idx){
 int solution(vector<int> numbers, int target) {
     int Ans = 0;
     memset(dp, -1, sizeof(dp));
-    Ans = DP(0, numbers, target, 0);
+    Ans = DP(numbers, target,0, 0);
     return Ans;
 }
