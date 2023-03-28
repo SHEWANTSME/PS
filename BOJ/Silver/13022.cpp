@@ -51,7 +51,7 @@ void chk_str(string pre, int sz){
     for(int i=0 ; i<cnt ; i++) temp.push_back('f');
     pre+=temp;
     
-    cout<<pre<<endl;
+   // cout<<pre<<endl;
     if(pre == s){
         cout<<1<<endl; exit(0);
     }
