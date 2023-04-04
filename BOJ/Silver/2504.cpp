@@ -39,103 +39,44 @@
 // // 빈 string을 따로 만든다음 거기에 계산된 값을 넣어둬
 // // 중첩된놈은 음.. 아냐 저렇게 하면 반드시 꼬임
 
+
+
+
+//-----------R---------E----------------
+
+
+
 // 늦었지만 4월4일 다시 시도해보도록 한다.
 // 분배법칙을 사용해서 해보자.
 #include<iostream>
 #include<vector>
 #include<algorithm>
 #include<string>
-#include<stack>
+#include<stack> // 필요할 것 같은 내용들 싹 다 include
 using namespace std;
 string s;
-stack<char>stk;
-vector<int>realans;
-// int main(){
-//     cin>>s;
-//     int temp = 1;
-//     int ans = 1;
-//     for(int i=0; i<s.size() ; i++){
-//         char now = s[i];
-//         if(stk.empty()){
-//             if(now == ')' or now ==']'){
-//                 cout<<i<<endl;
-//                 cout<<"맨첨"<<endl; exit(0);
-//             }
-//             stk.push(now);
-//             if(now =='('){
-//                 temp*=2;
-//                 ans= temp;
-//             }
-//             if(now == '['){
-//                 temp*=3;
-//                 ans = temp;
-//             }
-//         }
-//         else{
-//             if(stk.top()=='('){
-//                 if(now == ')'){
-//                   //  ans *=2;
-//                     realans.push_back(ans);
-//                     ans =1;
-//                     stk.pop();
-//                     temp/=2;
-//                     continue;
-//                 }
-//                 if(now == '('){
-//                     temp*=2;
-//                     ans = temp;
-//                     stk.push('(');
-//                     continue;
-//                 }
-//                 if(now == '['){
-//                     temp*=3;
-//                     ans=temp;
-//                     stk.push('[');
-//                     continue;
-//                 }
-//                 else{cout<<"두번"<<endl;exit(0);}
-//             }
-//             if(stk.top()=='['){
-//                 if(now == ']'){
-//                    // ans*=3;
-//                     realans.push_back(ans);
-//                     ans =1;
-//                     stk.pop();
-//                     temp/=3;
-//                     continue;
-//                 }
-//                 if(now == '['){
-//                     temp*=3;ans=temp;
-//                     stk.push('[');
-//                     continue;
-//                 }
-//                 if(now == '('){
-//                     temp*=2;ans=temp;
-//                     stk.push('(');
-//                     continue;
-//                 }
-//                 else{cout<<"세번"<<endl;exit(0);}
-//             }
-
-//         }
-
-
-//     }
-//     int res = 0;
-//     for(auto &e : realans){
-//         if(e==1)continue;
-//         cout<<e<<endl;
-//         res+=e;
-//     }
-//     cout<<res<<endl;
-// }
+stack<char>stk; // 질문 보니까 stack<char>가 overflow라던데 통과하던데?
+vector<int>realans; // 최종 realans를 담는 vector
 int main(){
+    // 분배법칙을 사용해서 푸는것이 포인트! 
+    // 분배법칙을 사용하지 않고 괄호를 어떻게 포인트를 잡을까 생각해봤는데
+    // 너무 어려워짐.. -> s1이 이정도가 아닐텐데? 하고 포기
+    /*
+    ( ( ( []() ) []  ) )
+    = 2*2*2*3 + 
+    현재 temp= 2*2*2
+    분배법칙 + temp + 경우 divide 하면 될듯??
+
+    ( () [ () ] () [() ] )
+    2*( 2+(3*2)+2+(3*2))
+    =2*2  + 2*3*2 + 2*2 + 2*3*2
+    */
     cin>>s;
     int temp = 1;
     int ans = 1;
     for(int i=0; i<s.size() ; i++){
         char now = s[i];
-        if(stk.empty()){
+        if(stk.empty()){ // 스택이 비어있을떄 경우를 나눠
             if(now == ')' or now ==']'){
                 //cout<<i<<endl;
                 cout<<0<<endl; exit(0);
@@ -150,7 +91,7 @@ int main(){
                 ans = temp;
             }
         }
-        else{
+        else{// 1개 이상 있을떄는  이런식으로 ㅇㅅㅇ..
             if(stk.top()=='('){
                 if(now == ')'){
                   //  ans *=2;
@@ -172,7 +113,7 @@ int main(){
                     stk.push('[');
                     continue;
                 }
-                else{cout<<0<<endl;exit(0);}
+                else{cout<<0<<endl;exit(0);}// 각각에 말도안되는경우는 즉각 처결
             }
             if(stk.top()=='['){
                 if(now == ']'){
@@ -195,21 +136,21 @@ int main(){
                 }
                 else{cout<<0<<endl;exit(0);}
             }
-
         }
-
-
     }
     int res = 0;
     for(auto &e : realans){
-        if(e==1)continue;
+        if(e==1)continue; // 문제는 풀었지만 왜 e=1이 나오는 경우가 있는지
+        // 왜 위에서 먼저 ans=1일때 거르면 에러가 뜨는지는 모르겠지만
+        // 나중에 생각해보자.
         //cout<<e<<endl;
         res+=e;
     }
-    if(not stk.empty()){
-        cout<<0<<endl;
+    if(not stk.empty()){ // 이거때매 30분 고민함
+    // 이거 안하면 -> (((())이런문제에서 걍 2*2*2*2 = 16이 나옴
+        cout<<0<<endl; // 걸러주고
         exit(0);
     }
-    cout<<"여긴가";
-    cout<<res<<endl;
+    //cout<<"여긴가";
+    cout<<res<<endl; // 나머지는 res값으로 출력
 }
