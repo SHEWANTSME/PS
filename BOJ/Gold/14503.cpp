@@ -1,4 +1,6 @@
 // 로봇 청소기 - G5 - 2023/04/06
+// 중요한건, 후진이 가능하면 반대방향으로만 후진을 진행하고
+// 후진상황에서 벽을 만나면 그대로 종료해야함.
 #include<iostream>
 #include<vector>
 #include<algorithm>
@@ -20,58 +22,31 @@ bool cleaned[51][51];
 int dx[4] = {-1,0,1,0};// -1  0  1  0
 int dy[4]= {0,1,0,-1};//  0   1  0  -1
 
-int ddx[4]={1,0,-1,0};// -1  0  1  0 
+int ddx[4]={1,0,-1,0};// 1  0  -1  0 
 int ddy[4]={0,-1,0,1};// 0  -1  0  1
 int stx, sty,n,r,c;//n=0:북,n=1동,n=2남,n=3서
 int cnt = 0;
 void Robot(int xx,int yy, int nn){
-    if(room[xx][yy]== 0 and cleaned[xx][yy]==0){
-        cleaned[xx][yy]=1;
-        cnt++;
+    // 걍 다시짜야겠따 머리아프군
+    if(room[xx][yy]==0 and cleaned[xx][yy]==0){
+        cnt++; cleaned[xx][yy]=1;
     }
-
-    // 일단 방향 체크부터 하자
-    bool flag = 0;
+    int arr[4];
+    if(nn==0){arr[0]=3;arr[1]=2;arr[2]=1;arr[3]=0;}
+    if(nn==1){arr[0]=0;arr[1]=3;arr[2]=2;arr[3]=1;}
+    if(nn==2){arr[0]=1;arr[1]=0;arr[2]=3;arr[3]=2;}
+    if(nn==3){arr[0]=2;arr[1]=1;arr[2]=0;arr[3]=3;}
     for(int i=0 ; i<4 ; i++){
-        if(flag==1)break;
-        int kx = dx[i]+xx;
-        int ky = dy[i]+yy;
-        if(kx<0 or ky<0 or kx>=r or ky>=c)continue;
-        if(cleaned[kx][ky]==1 )continue;
-        flag=1;
-    }
-    if(flag!=1){
-        int back= nn+2;
-        if(back>=4)back-=4;
-        int nnx = xx+dx[back];
-        int nny=yy+dy[back];
-        if(nnx<0 or nny<0 or nnx>=r or nny>=c)return;
-        if(room[nnx][nny]==1)return;
-        // if(cleaned[nnx][nny]==1)return;
-        Robot(nnx,nny,nn);
+        int nx = xx+dx[arr[i]];
+        int ny = yy+dy[arr[i]];
+        if(nx<0 or ny<0 or nx>=r or ny>=c)continue;
+        if(room[nx][ny])continue;
+        if(cleaned[nx][ny])continue;
+        Robot(nx,ny,arr[i]);
         return;
-    }
-    else{
-        for(int i=nn; i<nn+4 ; i++){
-            int tmp=i;
-            if(tmp>=4) tmp-=4;
-            int nx = xx+ddx[tmp];
-            int ny = yy+ddy[tmp];
-            //if(nx<0 or ny<0 or nx>=r or ny>=c)continue;
-            if(cleaned[nx][ny]==1 or room[nx][ny]==1)continue;
-            Robot(nx,ny,tmp);
-            return;
-        }
-    }
-
-    //nn=0 -> 1,2,3체크
-    //nn=1 -> 2,3,0체크
-    //nn=2 -> 3,0,1
-    //nn=3-> 0,1,2
-    //nn
-   
-    
-
+     }
+        if(room[xx+ddx[nn]][yy+ddy[nn]]==1) return;
+        else Robot(xx+ddx[nn],yy+ddy[nn],nn);
 }
 int main(){
     cin>>r>>c;
@@ -79,12 +54,16 @@ int main(){
     for(int i=0; i<r;i++)
         for(int j=0;j<c;j++)
             cin>>room[i][j];
-    Robot(stx,sty,n);
+    Robot(stx,sty,n); 
+    //for(int i=0; i<r ; i++){
+    //    for(int j=0 ; j<c ; j++){
+    //        cout<<cleaned[i][j]<<" ";
+    //    }cout<<endl;
+    //}
     cout<<cnt<<endl;
-    // for(int i=0; i<r ; i++){
-    //     for(int j=0 ; j<c ; j++){
-    //         cout<<cleaned[i][j]<<" ";
-    //     }cout<<endl;
-    // }
-
 }
+
+// 하 더러운 문제군
+// 그냥 하라는대로 하면 되는데, 내가 처음에 생각했던것처럼 도는게 아니고
+// nn:0 -> 3,2,1,0이면 nn:1 -> 0,3,2,1 이렇게 됨.. 이게 첨엔 생각이 안났음
+// 처음엔 그냥 3,2,1,0이면 그다음엔 2,1,0,3겠지 이렇게만 생각했음.
