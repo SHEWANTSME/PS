@@ -22,6 +22,7 @@ bool cleaned[51][51];
 int dx[4] = {-1,0,1,0};// -1  0  1  0
 int dy[4]= {0,1,0,-1};//  0   1  0  -1
 
+// 후진 -> ddx -> dx랑 부호만 다름
 int ddx[4]={1,0,-1,0};// 1  0  -1  0 
 int ddy[4]={0,-1,0,1};// 0  -1  0  1
 int stx, sty,n,r,c;//n=0:북,n=1동,n=2남,n=3서
@@ -29,14 +30,15 @@ int cnt = 0;
 void Robot(int xx,int yy, int nn){
     // 걍 다시짜야겠따 머리아프군
     if(room[xx][yy]==0 and cleaned[xx][yy]==0){
-        cnt++; cleaned[xx][yy]=1;
+        cnt++; cleaned[xx][yy]=1;//1번.
     }
     int arr[4];
-    if(nn==0){arr[0]=3;arr[1]=2;arr[2]=1;arr[3]=0;}
-    if(nn==1){arr[0]=0;arr[1]=3;arr[2]=2;arr[3]=1;}
-    if(nn==2){arr[0]=1;arr[1]=0;arr[2]=3;arr[3]=2;}
+    if(nn==0){arr[0]=3;arr[1]=2;arr[2]=1;arr[3]=0;}// 북쪽을 바라보고 있을때, arr[0]은 9시방향,arr[1]은 6시방향, arr[2]는 3시, 0시 이렇게
+    if(nn==1){arr[0]=0;arr[1]=3;arr[2]=2;arr[3]=1;}// 동쪽을 ``, arr[0]:0시, arr[1]:9시 ,6시 ,,
+    if(nn==2){arr[0]=1;arr[1]=0;arr[2]=3;arr[3]=2;}// 현재 방향과 반시계가 어떻게 돌아가는지 파악하면 된다.
     if(nn==3){arr[0]=2;arr[1]=1;arr[2]=0;arr[3]=3;}
     for(int i=0 ; i<4 ; i++){
+        // 3경우들
         int nx = xx+dx[arr[i]];
         int ny = yy+dy[arr[i]];
         if(nx<0 or ny<0 or nx>=r or ny>=c)continue;
@@ -45,8 +47,8 @@ void Robot(int xx,int yy, int nn){
         Robot(nx,ny,arr[i]);
         return;
      }
-        if(room[xx+ddx[nn]][yy+ddy[nn]]==1) return;
-        else Robot(xx+ddx[nn],yy+ddy[nn],nn);
+        if(room[xx+ddx[nn]][yy+ddy[nn]]==1) return; //2-b
+        else Robot(xx+ddx[nn],yy+ddy[nn],nn);//2-a
 }
 int main(){
     cin>>r>>c;
