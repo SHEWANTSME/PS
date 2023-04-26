@@ -84,6 +84,7 @@
 
 
 
+
 //     for(int i=1 ; i<=224; i++){
 //         v.push_back(i*i);
 //     }
@@ -112,6 +113,8 @@
 
     
 // }
+
+// 은근 까다롭네..
 #include<iostream>
 #include<deque>
 #include<algorithm>
@@ -128,25 +131,26 @@ int main(){
     }
     int cnt =0;
     int temp=0;
-    // temp+=truck_L.front();
-    // cnt++;
-    //truck_L.pop_front();
+    // 간단하게 생각하면 된다
+    // 1. truck_M에 올라탈 수 있으면 올라타고(temp계산해두고)
+    // 2. truck_M에 있는애들 전진시키고
+    // 3. 전진후 빠질애들은 빠지고(temp계산해두고)
     while(not(truck_L.empty() and truck_M.empty())){
         int now = truck_L.front();
         cnt++;
-        if(not truck_L.empty() and temp+now<=l){
-            truck_M.push_back({now,0});
-            temp+=now;
-            truck_L.pop_front();
+        if(not truck_L.empty() and temp+now<=l){ //truck_M에 올라탈 수 있는 경우엔
+            truck_M.push_back({now,0});// 올라타고
+            temp+=now; // temp(하중계산)더해주고
+            truck_L.pop_front();// L의 맨처음애 빼주고
         }
-        for(auto &e : truck_M){
-            e.second++;
+        for(auto &e : truck_M){//truck_M에 있는애들을 전진시켜야지
+            e.second++;//한번의 cnt에서 전진시키는게 포함되는거니까 이렇게 짜야함
         }
         int weight = truck_M.front().first;
         int idx = truck_M.front().second;
-        if(idx==w){
-            temp-=weight;
-            truck_M.pop_front();
+        if(idx==w){  // 그중 truck_M의 앞대가리가 w랑 길이 같으면
+            temp-=weight; // temp(하중계산) 빼버리고
+            truck_M.pop_front();// truck_M에서도 빼버리고
         }
     }
     cout<<cnt+1<<endl;
