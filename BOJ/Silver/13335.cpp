@@ -1,4 +1,4 @@
-// // //https://non-stop.tistory.com/106?category=983104
+
 // // #include <iostream>
 // // #include <vector>
 // // #include <queue>
@@ -115,6 +115,7 @@
 // }
 
 // 은근 까다롭네..
+// 트럭- S1 - 2023/04/26
 #include<iostream>
 #include<deque>
 #include<algorithm>
