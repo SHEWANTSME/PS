@@ -22,8 +22,21 @@ void Rec(int idx, int cnt ,int n){
     if(idx+1<=n)Rec(idx+1,cnt,n);// 다음 idx를 뽑지 않는 경우
     return;
 }
-
+// 참고로 next_permutation 사용방법은 다음과 같음
+// next_permutation은 “오름차순의 배열”을 기준으로 순열을 구성함
+// prev_permuation은 “내림차순의 배열”을 기준으로 순열을 구성함
+int arr[6]={1,2,3,4,5,6};
+void Permutation(){
+    do{
+        for(int i=0;i<6;i++){
+            cout<<arr[i]<<" ";
+        }cout<<endl;
+    }while(next_permutation(arr,arr+6));
+}
+//https://ansohxxn.github.io/algorithm/combination/
+// 위의 링크가서 자세히 보면 더 이해가 쉬움
 int main(){
+    Permutation();
     while(1){
         int n;cin>>n;
         if(n==0)break;
