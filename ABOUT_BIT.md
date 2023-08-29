@@ -1,6 +1,6 @@
 ## ABOUT BIT  
-![Alt text](Bit.png)
-![Alt text](%E1%84%87%E1%85%B5%E1%84%90%E1%85%B3%E1%84%8B%E1%85%A7%E1%86%AB%E1%84%89%E1%85%A1%E1%86%AB%E1%84%80%E1%85%AA%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%86%A8%E1%84%8B%E1%85%A7%E1%86%AB%E1%84%89%E1%85%A1%E1%86%AB%E1%84%8E%E1%85%A1%E1%84%8B%E1%85%B5.png)
+![Bit](https://github.com/SHEWANTSME/NOVEMBER/assets/91362178/eb034879-2515-4f8b-8601-0dd39f503ff8)
+<img width="591" alt="비트연산과로직연산차이" src="https://github.com/SHEWANTSME/NOVEMBER/assets/91362178/7410f975-bc5f-4ea0-873f-8a967cd826fa">
 
 ```cpp  
 #include <iostream>
