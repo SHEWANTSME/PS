@@ -38,6 +38,8 @@
 // }
 
 // 2. 트라이로 푸는 방법
+// 그림 그려가면서 생각해보면 그나마 쉬움
+//https://blog.encrypted.gg/1059 -> 참고
 
 #include <iostream>
 #include <vector>
@@ -102,7 +104,7 @@ int main(){
         for(int i=0;i<n;i++){
             ans+=find(phone_num[i]);//트라이에 있는지 확인
         }
-        if(ans<n)cout<<"NO"<<endl;
-        else cout<<"YES"<<endl;
+        if(ans<n)cout<<"NO"<<endl;//하나라도 통과하지 못하면 NO -> 포함되는 전화번호가 있으니 NO
+        else cout<<"YES"<<endl;//모두 통과하면 YES -> 포함되는 전화번호가 없으니 YES
     }
 }
