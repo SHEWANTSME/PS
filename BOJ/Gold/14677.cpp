@@ -1,3 +1,4 @@
+// 병약한 윤호 - G5 - 2024/11/21
 #include<iostream>
 #include<vector>
 #include<string>
@@ -36,7 +37,5 @@ int main(){
     }
     cout<<s<<endl;
     memset(dp,-1,sizeof(dp));// dp -1로 초기화
-    int k =n;
     cout<<recur(0,3*n -1 ,1)<<endl;
-   // cout<<recur(0,n -1 ,1)<<endl;
 }
