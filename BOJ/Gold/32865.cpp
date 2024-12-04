@@ -1,4 +1,6 @@
 // //컴소인의 크리스마스 - G5 - 2024/12/04
+
+// 이전코드 -> arr[1e9]를 하면 메모리 낭비라서 터짐 
 // #include<iostream>
 // #include<algorithm>
 // #include<vector>
@@ -58,6 +60,7 @@
 
 // }
 
+// 통과 코드
 #include <iostream>
 #include <unordered_map>
 #include <deque>
@@ -70,16 +73,20 @@ int num_x;
 ll tot_sum;
 int n;
 ll arr[200001];
-unordered_map<int, deque<int>> q; // 희소 구조 활용
+unordered_map<int, deque<int>> q; // 지금처럼 sparse하고 빠른 정렬필요없고 중복X일땐 이렇게
+// deque말고 걍 vector로 하는게 더 빠름(왜 deque로 했지?)
 
 int main() {
     cin >> n;
     for (int i = 1; i <= n; i++) {
         cin >> arr[i];
         tot_sum += arr[i];
-        q[arr[i]].push_front(i); // 필요한 경우에만 공간 할당
+        q[arr[i]].push_front(i); //이렇게 sparse한 경우엔 unordered_map을 써줘야함
+        // #include<map> -> map은 정렬O + 중복x , multimap은 정렬O + 중복 key 허락, 
+        // #include<unordered_map> -> unordered_map은 정렬 X 중복 X , unordered_multimap -> 정렬X ,중복 keyO
     }
-    if (tot_sum+1 != n) {
+    if (tot_sum+1 != n) {// 이걸 안하면 30퍼쯤에서 틀리더라
+        //x 개수 = O 개수+1 이여야만 함! 즉, 내가 구현한 대로 보면 tot_sum+1 = n이 아닐땐 무조건 -1임
         cout << -1 << endl;
         exit(0);
     }
