@@ -28,7 +28,33 @@ int main(){
 }
 
 //2번 풀이(Recursion)
-
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#define ll long long
+using namespace std;
+int n, cnt;
+ll ans=-1;
+void Back(ll num, int size){
+    if(size==0){
+        if(cnt==n)ans=num;
+        cnt++; return;
+    }
+    int lst = num%10;
+    if(num==0) lst = 10;
+    for(int i=0;i<lst;i++){
+        ll nxt = (num*10)+i;
+        if(num==0 and i==0)continue;
+        Back(nxt,size-1);
+    }
+}
+int main(){
+    cin>>n;
+    for(int i=0;i<=10;i++){
+        Back(0,i);
+    }
+    cout<<ans<<endl;
+}
 //3번풀이(brute force) -> 시간초과
 #include <iostream>
 using namespace std;
