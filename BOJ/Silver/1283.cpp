@@ -99,3 +99,35 @@ int main() {
         cnt++;
     }
 }
+/*
+반례
+
+input
+
+6
+aearr ererr rerer kerer hereh
+aearr ererr rerer kerer hereh
+aearr ererr rerer kerer hereh
+aearr ererr rerer kerer hereh
+aearr ererr rerer kerer hereh
+aearr ererr rerer kerer hereh
+
+
+
+
+
+답
+
+[a]earr ererr rerer kerer hereh
+
+aearr [e]rerr rerer kerer hereh
+
+aearr ererr [r]erer kerer hereh
+
+aearr ererr rerer [k]erer hereh
+
+aearr ererr rerer kerer [h]ereh
+
+aearr ererr rerer kerer hereh
+
+*/
