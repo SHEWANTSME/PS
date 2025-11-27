@@ -1,5 +1,5 @@
 //백준 빙고 스피드러너 - G3 - 2025.11.24
-// 시간초과 -> chk함수 최적화 필요
+// 완료 -> 누적합이랑 line_selected로 따져줘야함
 #include<iostream>
 #include<vector>
 #include<algorithm>
@@ -9,103 +9,111 @@
 using namespace std;
 int n;
 ll arr[1503][1503];
-ll fin=0;
 ll visited[1503][1503];
-
-ll chk_vertical(int y, ll pre){ // k는 k번째 빙고가 될 수 있는 minimum 값
-    ll sum = 0;
-    for(int i=1; i<=n; i++){
-        if(visited[i][y]==0) sum += arr[i][y];
-    }
-    if(sum==0) return -1;
-    else return pre+sum;
-}
-ll chk_horizontal(int x, ll pre){
-    ll sum = 0;
-    for(int j=1; j<=n; j++){
-        if(visited[x][j]==0) sum += arr[x][j];
-    }
-    if(sum==0) return -1;
-    else return pre+sum;
-}
-ll chk_diagonal(ll pre){
-    ll sum = 0;
-    for(int i=1; i<=n; i++){
-        if(visited[i][i]==0) sum += arr[i][i];
-    }
-    if(sum==0) return -1;
-    else return pre+sum;
-
-}
-ll chk_rev_diagonal(ll pre){
-    ll sum = 0;
-    for(int i=1; i<=n; i++){
-        if(visited[i][n-i+1]==0) sum += arr[i][n-i+1];
-    }
-    if(sum==0) return -1;
-    else return pre+sum;
-}
+bool line_selected[1503*2+5];
+ll selected_count = 0;
+ll sum_vertical[1503];
+ll sum_horizontal[1503];
+ll sum_diagonal =0;
+ll sum_rev_diagonal=0;
 
 int main(){
     fastio;
     cin>>n;
+    for(int i=1; i<=n; i++)
+        for(int j=1; j<=n; j++)
+            cin>>arr[i][j];
+    
+    // 누적합
     for(int i=1; i<=n; i++){
         for(int j=1; j<=n; j++){
-            cin>>arr[i][j];
-            fin+=arr[i][j];
+            sum_horizontal[i] += arr[i][j];
+            sum_vertical[j] += arr[i][j];
+            if(i==j) sum_diagonal += arr[i][j];
+            if(i+j==n+1) sum_rev_diagonal += arr[i][j];
         }
     }
+
     ll tmp = 0;
-    while(1){
-        vector<pair<ll,ll>> bingo;
-        for(int i=1;i<=n;i++){
-            ll hh = chk_horizontal(i,tmp);
-            if(hh != -1) {bingo.push_back({i,hh});}
+    while (selected_count < 2*n+2) {
+        vector<pair<ll,ll>> bingo; // {id, cost}
+        for(int i=1; i<=n; i++){ //horizontal
+            if (not line_selected[i]) bingo.push_back({i, sum_horizontal[i]});
         }
-        for(int i=1;i<=n;i++){
-            ll vv = chk_vertical(i,tmp);
-            if(vv != -1) {bingo.push_back({n+i,vv});}
+        for(int j=1; j<=n; j++) { //vertical
+            if (not line_selected[n + j]) bingo.push_back({n + j, sum_vertical[j]});
         }
-        ll dd = chk_diagonal(tmp); 
-        if(dd!=-1) bingo.push_back({2*n+1, dd});
-        ll rdd = chk_rev_diagonal(tmp); 
-        if(rdd!=-1) bingo.push_back({2*n+2, rdd});
-        
+        // diagonal, reverse diagonal
+        if (not line_selected[2*n+1]) bingo.push_back({2*n+1 ,sum_diagonal});
+        if (not line_selected[2*n+2]) bingo.push_back({2*n+2, sum_rev_diagonal});
+        if (bingo.empty()) break;
+
         sort(bingo.begin(), bingo.end(),
             [](const pair<ll,ll>& a, const pair<ll,ll>& b) {
-                return a.second < b.second;   // second 기준 오름차순
+                if(a.second != b.second) return a.second < b.second;// cost 기준 오름차순
+                return a.first < b.first;// cost가 같으면 id 기준 오름차순
             });
-        bool flag= 0;
-        //cout<<"bingo bingo : "<<bingo[0].second<<endl;
-        if(bingo.empty()) break;
-        if(bingo[0].first>=1 and bingo[0].first<=n){//horizontal
-            ll row = bingo[0].first;
-            for(int j=1; j<=n; j++){
-                visited[row][j]=1;
-            }
-        }
-        else if(bingo[0].first>n and bingo[0].first<=2*n){//vertical
-            ll col = bingo[0].first - n;
-            for(int i=1; i<=n; i++){
-                visited[i][col]=1;
-            }
-        }
-        else if(bingo[0].first == 2*n+1){//diagonal
-            for(int i=1; i<=n; i++){
-                visited[i][i]=1;
-            }
-        }
-        else if(bingo[0].first == 2*n+2){//reverse diagonal
-            for(int i=1; i<=n; i++){
-                visited[i][n-i+1]=1;
-            }
-        }
-        else{
-            flag=1;break;
-        }
-        if(flag) break;
-        tmp = bingo[0].second;
+
+        auto [id, cost] = bingo[0];
+        tmp += cost;
         cout<<tmp<<endl;
+        line_selected[id] = 1;
+        selected_count++;
+        if (id >= 1 and id <= n) {// horizontal
+            int r = id;
+            for (int c=1; c<=n; c++) {
+                if (not visited[r][c]) {
+                    visited[r][c] = 1;
+                    ll v = arr[r][c];
+                    sum_horizontal[r] -= v;
+                    sum_vertical[c] -= v;
+                    if (r == c) sum_diagonal -= v;
+                    if (r+c == n+1) sum_rev_diagonal -= v;
+                }
+            }
+        }
+        else if (id>n and id<=2*n) {// vertical
+            int c = id-n;
+            for (int r = 1; r <= n; r++) {
+                if (not visited[r][c]) {
+                    visited[r][c] = 1;
+                    ll v = arr[r][c];
+                    sum_horizontal[r] -= v;
+                    sum_vertical[c] -= v;
+                    if (r == c) sum_diagonal -= v;
+                    if (r+c == n+1) sum_rev_diagonal -= v;
+                }
+            }
+        }
+        else if (id == 2*n +1) {// main diagonal
+            for (int i = 1; i <= n; i++) {
+                int r = i;
+                int c = i;
+                if (not visited[r][c]) {
+                    visited[r][c] = 1;
+                    ll v = arr[r][c];
+                    sum_horizontal[r] -= v;
+                    sum_vertical[c] -= v;
+                    sum_diagonal -= v;
+                    if (r+c == n+1) sum_rev_diagonal -= v;
+                }
+            }
+        }
+        else if (id == 2*n+2) {//reverse diagonal
+            for (int i = 1; i <= n; i++) {
+                int r = i;
+                int c = n-i+1;
+                if (not visited[r][c]) {
+                    visited[r][c] = 1;
+                    ll v = arr[r][c];
+                    sum_horizontal[r] -= v;
+                    sum_vertical[c] -= v;
+                    sum_rev_diagonal -= v;
+                    if (r == c) sum_diagonal -= v;
+                }
+            }
+        }
+        else break;
     }
-    cout<<fin<<endl;
+
 }
