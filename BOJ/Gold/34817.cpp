@@ -1,25 +1,19 @@
 //쉬운 정렬 문제 - G5 - 2025.12.02
 #include<iostream>
 #include<algorithm>
-#define ll long long
+#include<vector>
 using namespace std;
-ll n,k;
-vector<ll>arr;
-vector<ll>v;
-bool flag=0;
+int n,k;
+vector<int>arr;
 int main(){
     cin>>n>>k;
-    for(int i=0;i<n;i++){
-        ll a;cin>>a;
-        arr.push_back(a);
+    for(int i=0; i<n; i++){
+        int t;cin>>t;arr.push_back(t);
     }
-    v=arr;
-    sort(v.begin(),v.end());
-    for(int i=0;i<n;i++){
-        if(flag)break;
-        ll tmp = abs(arr[i]-v[i]);
-        if(tmp>k) flag=1;
+    int now = arr[0];
+    for(int i=1; i<n; i++){
+        if(now>arr[i]+k){cout<<"NO"<<endl; exit(0);}
+        now=max(now,arr[i]);
     }
-    if(flag)cout<<"NO"<<endl;
-    else cout<<"YES"<<endl;
+    cout<<"YES"<<endl;
 }
