@@ -3,47 +3,52 @@
 #include <vector>
 #include <algorithm>
 #include <queue>
+#include <map>
 #define ll long long
+#define fastio ios::sync_with_stdio(false), cin.tie(0), cout.tie(0)
 using namespace std;
-int n,t,k;
-ll ans=0;
-priority_queue<pair<int,int>> pq; // <수수료, 생성시간>
+priority_queue<pair<ll,ll>> pq_fee;
+priority_queue<pair<ll,ll>, vector<pair<ll,ll>>, greater<>> pq_time;
+map<pair<ll,ll>, int> removed;
+
+int n;
+ll t,k;
+ll ans = 0;
 int main(){
+    fastio;
     cin>>n>>t>>k;
     while(n--){
-        int a,b,c;
+        int a;
         cin>>a;
         if(a==1){
-            cin>>b>>c;// 시간(생성시간) b에 수수료가 c인 transaction 생성되어 transaction pool에 저장됨
-            pq.push({c,-b}); // 우선순위 1. 수수료 -> 그 다음 2. 생성시간 -> 수수료가 같다면 먼저 생성된 트랜잭션의 우선순위가 높음
+            ll b, c;
+            cin>>b>>c;
+            pq_fee.push({c, -b});
+            pq_time.push({b,c});
         }
         else{
-            cin>>b; 
-            // b-t부터 b 사이에 생성된 트랜잭션 중에서 수수료가 가장 큰 k개의 트랜잭션을 블록에 포함시킴
-            int cnt=0;//
-            ll sum=0;
-            priority_queue<pair<int,int>> temp; // 임시 우선순위 큐
-            while(not pq.empty() and cnt<k){ // 트랜잭션 풀에 트랜잭션이 남아있고, 아직 k개를 포함시키지 않은 경우
-                auto top = pq.top();
-                pq.pop();
-                int fee = top.first; // 수수료
-                int time = -top.second; // 생성시간
-                if(time>=b - t){ 
-                    // 생성시간이 b-t 이상이면 블록에 포함시킴
-                    sum += fee;
-                    cnt++;
-                }
-                else{
-                    // 생성시간이 b-t 미만이면 블록에 포함시키지 않고 임시 우선순위 큐에 넣음
-                    temp.push({fee, -time});
-                }
+            ll b;
+            cin>>b;
+            while(not pq_time.empty() and pq_time.top().first < b-t){
+                ll time = pq_time.top().first;
+                ll fee = pq_time.top().second;
+                pq_time.pop();
+                removed[{fee,time}]++;
             }
-            //cout<<"SUMM" << sum<<endl;
-            //cout<<temp.size()<<endl;
-            // 남아있는 트랜잭션들을 다시 트랜잭션 풀에 넣어줌
-            while(not temp.empty()){
-                pq.push(temp.top());
-                temp.pop();
+            ll sum=0;
+            int cnt=0;
+            while(!pq_fee.empty() && cnt < k){
+                ll fee = pq_fee.top().first;
+                ll time = -pq_fee.top().second;
+                
+                if(removed[{fee,time}]>0){
+                    removed[{fee,time}]--;
+                    pq_fee.pop();
+                    continue;
+                }
+                sum += fee;
+                cnt++;
+                pq_fee.pop();
             }
             ans+=sum;
         }
