@@ -7,9 +7,9 @@
 #define ll long long
 #define fastio ios::sync_with_stdio(false), cin.tie(0), cout.tie(0)
 using namespace std;
-priority_queue<pair<ll,ll>> pq_fee;
-priority_queue<pair<ll,ll>, vector<pair<ll,ll>>, greater<>> pq_time;
-map<pair<ll,ll>, int> removed;
+priority_queue<pair<ll,ll>> pq_fee; // 수수료 기준 max heap
+priority_queue<pair<ll,ll>, vector<pair<ll,ll>>, greater<>> pq_time; // 시간 기준 min heap
+map<pair<ll,ll>, int> removed; // (수수료, 시간) 쌍에 대해 제거된 개수 기록 -> lazy deletion 위해
 
 int n;
 ll t,k;
@@ -23,12 +23,16 @@ int main(){
         if(a==1){
             ll b, c;
             cin>>b>>c;
+            // time b에 fee c인 transaction 생성
             pq_fee.push({c, -b});
             pq_time.push({b,c});
         }
         else{
             ll b;
             cin>>b;
+            // time b에 블록 생성
+
+            // 1. 유효기간 지난 트랜잭션 제거
             while(not pq_time.empty() and pq_time.top().first < b-t){
                 ll time = pq_time.top().first;
                 ll fee = pq_time.top().second;
@@ -37,15 +41,16 @@ int main(){
             }
             ll sum=0;
             int cnt=0;
-            while(!pq_fee.empty() && cnt < k){
+            while(not pq_fee.empty() and cnt < k){ // 2. 수수료가 가장 큰 k개 선택
                 ll fee = pq_fee.top().first;
-                ll time = -pq_fee.top().second;
+                ll time = -pq_fee.top().second; // 저장할 때 음수로 저장했으므로 다시 양수로 바꿔줌
                 
-                if(removed[{fee,time}]>0){
+                if(removed[{fee,time}]>0){ // 이미 삭제 예정이면 건너뜀
                     removed[{fee,time}]--;
                     pq_fee.pop();
                     continue;
                 }
+                // block에 포함
                 sum += fee;
                 cnt++;
                 pq_fee.pop();
