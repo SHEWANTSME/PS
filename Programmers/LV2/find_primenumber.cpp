@@ -56,3 +56,70 @@ int solution(string numbers) {
     int ans = chk_prime(st);         // 2단계: 그 후보들 중 소수 개수 세기
     return ans;
 }
+// ----------------------------
+// DFS version (with backtracking)
+#include<string>
+#include<set>
+#include<vector>
+#include<cmath>
+using namespace std;
+
+// 만들어질 수 있는 모든 숫자 후보를 저장하는 전역 set
+// - set이라서 중복된 숫자가 여러 경로(다른 자리 조합)로 만들어져도 자동으로 하나만 남음
+// - 정렬도 자동으로 되어 있음 (오름차순)
+set<int> cands;
+
+/*
+원본을 바꿀 필요 없고, 크기도 작음 (int, bool, double 등) -> 그냥 전달 (int x)
+원본을 바꿀 필요 없지만, 크기가 큼 (string, vector, set 등) -> const쓰고 (const string &x)
+함수 안에서 원본 자체를 수정해야 함 -> &사용 -> (int &x)
+*/
+
+// n: 원본 숫자 문자열 (읽기만 하므로 const&로 받아 복사 비용 없앰)
+// used: 각 자리(인덱스)를 이번 경로에서 이미 썼는지 표시 (재귀 도는 동안 계속 값이 바뀌어야 하므로 & 필수)
+// cur: 지금까지 골라서 이어붙인 숫자 문자열 (매 호출마다 새 문자열이 만들어지는 게 자연스러워서 값 전달)
+void DFS(const string &n, vector<bool>& used, string cur){
+    // cur이 빈 문자열이 아니라는 건 "최소 한 자리 이상 골랐다"는 뜻
+    // -> 이 시점의 cur 자체가 하나의 유효한 "만들 수 있는 숫자"이므로 후보에 추가
+    if(cur!="") cands.insert(stoi(cur));
+
+    // n의 모든 자리를 훑으면서, 아직 이번 경로에서 안 쓴 자리를 찾아 이어붙임
+    for(int i=0; i<n.size();i++){
+        if(!used[i]){
+            used[i]=1;              // 이 자리를 "이번 경로에서 사용함"으로 표시
+            DFS(n,used,cur+n[i]);   // 현재 자리를 이어붙인 새 문자열로 한 단계 더 깊이 들어감
+            used[i]=0;               // 백트래킹: 다른 경로를 탐색하기 전에 이 자리를 다시 "안 씀"으로 되돌림
+                                      // (used는 재귀 전체가 공유하는 하나의 배열이라 직접 되돌려줘야 함)
+        }
+    }
+}
+
+// cands 안의 숫자들 중 소수가 몇 개인지 세는 함수
+int chk_prime(set<int> cands){
+    int cnt=0; 
+    for(auto &e : cands){ 
+        if(e<=1)continue; // 0, 1은 소수가 아니므로 스킵
+
+        bool x = 0; 
+        // 2부터 sqrt(e)까지만 나누어봐도 소수 판별 충분 (약수는 sqrt를 기준으로 쌍을 이루기 때문)
+        for(int i=2; i<=sqrt(e); i++){
+            if(e%i==0){x=1;break;} 
+        }
+
+        if(!x)cnt++; // 끝까지 나누어떨어지는 수가 없었으면 소수
+    }
+    return cnt;
+}
+
+// n으로 만들 수 있는 모든 숫자 후보(set)를 구해서 리턴
+set<int> make_num(string n){
+    vector<bool> used(n.size(),0); // 처음엔 모든 자리가 "안 쓴 상태"
+    DFS(n,used,"");                 // cur이 빈 문자열인 상태로 DFS 시작
+    return cands;
+}
+
+int solution(string numbers) {
+    set<int> st = make_num(numbers); // 1단계: 만들 수 있는 모든 숫자 후보 구하기
+    int ans = chk_prime(st);          // 2단계: 그 후보들 중 소수 개수 세기
+    return ans;
+}
